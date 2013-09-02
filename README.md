@@ -13,19 +13,19 @@ Viewing the results:
 
 ![Results](https://raw.github.com/nikhilv/ec-babyPhoto/master/ghImages/results.jpg "Results")
 
-How to use:                                                                                    
+## How to use:                                                                                    
 1. Install Vagrant and Virtualbox.
-2. git clone this repository
-3. vagrant up
+2. `git clone` this repository
+3. `vagrant up`
 4. Navigate to localhost:8008
  
-Things you will need to change:
-1. Place your own images in the img/baby and img/recent directories.
-2. Hash the baby photo image names so contestants cannot figure out baby photo name by inspecting html.
-3. Change the /results URL if you want to hide submissions.
+## Things you will need to change:
+1.  Place your own images in the img/baby and img/recent directories.
+2.  Hash the baby photo image names so contestants cannot figure out baby photo name by inspecting html.
+3.  Change the /results URL if you want to hide submissions.
 
-Future enhancements:
+## Future enhancements:
 - Use Foundation or Twitter Bootstrap to make web app look better.
  
-Known issues:
+## Known issues:
 - IE rendering issues
