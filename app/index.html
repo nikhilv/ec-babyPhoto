@@ -1,0 +1,210 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Electric Cloud Match Baby Photo Contest!</title>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script src="js/app.js"></script>
+    <style>
+        #gallery { float: left; width: 65%; min-height: 12em; }
+        .gallery.custom-state-active { background: #eee; }
+        .gallery li { float: left; width: 96px; padding: 0.4em; margin: 0 0.4em 0.4em 0; text-align: center; }
+        .gallery li h5 { margin: 0 0 0.4em; cursor: move; }
+        .gallery li a { float: right; }
+        .gallery li a.ui-icon-zoomin { float: left; }
+        .gallery li img { width: 100%; cursor: move; }
+
+        .match { float: right; width: 32%; min-height: 9.5em; }
+        .match h4 { line-height: 16px; margin: 0 0 0.4em; }
+        .match h4 .ui-icon { float: left; }
+        .match .gallery h5 { display: none; }
+
+        .constrainWidth {width: 400px !important}
+
+    </style>
+
+    <script>
+        $(function() {
+            // there's the gallery and the trash
+            var $gallery = $( "#gallery" ),
+                    $trash = $( ".match" );
+
+            // let the gallery items be draggable
+            $( "li", $gallery ).draggable({
+                cancel: "a.ui-icon", // clicking an icon won't initiate dragging
+                revert: "invalid", // when not dropped, the item will revert back to its initial position
+                containment: "document",
+                helper: "clone",
+                cursor: "move"
+            });
+
+            $.each($trash, function() {
+                $(this).droppable({
+                    accept: "#gallery > li",
+                    activeClass: "ui-state-highlight",
+                    drop: function( event, ui ) {
+                        deleteImage( ui.draggable, this );
+                    }
+                });
+            });
+
+            // let the gallery be droppable as well, accepting items from the trash
+            $gallery.droppable({
+                accept: ".match li",
+                activeClass: "custom-state-active",
+                drop: function( event, ui ) {
+                    recycleImage( ui.draggable );
+                }
+            });
+
+            // image deletion function
+            var recycle_icon = "<a href='link/to/recycle/script/when/we/have/js/off' title='Return image to gallery' class='ui-icon ui-icon-refresh'>Return image to gallery</a>";
+            function deleteImage( $item, $appendTo ) {
+                $item.fadeOut(function() {
+                    $($appendTo).append("<ul class='gallery ui-helper-reset'/>");
+
+                    $item.append( recycle_icon ).appendTo($($appendTo).find(".ui-helper-reset") ).fadeIn(function() {
+                        $item
+                                .animate({ width: "48px" })
+                                .find( "img" )
+                                .animate({ height: "36px" });
+                    });
+
+                });
+            }
+
+
+            function recycleImage( $item ) {
+                $item.fadeOut(function() {
+                    $item
+                            .find( "a.ui-icon-refresh" )
+                            .remove()
+                            .end()
+                            .css( "width", "96px")
+                            .find( "img" )
+                            .css( "height", "72px" )
+                            .end()
+                            .appendTo( $gallery )
+                            .fadeIn();
+                });
+            }
+
+            // image preview function, demonstrating the ui.dialog used as a modal window
+            function viewLargerImage( $link ) {
+                var src = $link.attr( "href" ),
+                        title = $link.siblings( "img" ).attr( "alt" ),
+                        $modal = $( "img[src$='" + src + "']" );
+
+                var img = $( "<img class='constrainWidth' src='" + src + "'style='display: none; padding: 8px;' />" )
+                        .attr( "src", src ).appendTo( "body" );
+                setTimeout(function() {
+                    img.dialog({
+                        title: title,
+                        width: 400,
+                        modal: true
+                    });
+                }, 1 );
+
+            }
+
+            // resolve the icons behavior with event delegation
+            $( "ul.gallery > li" ).click(function( event ) {
+                var $item = $( this ),
+                        $target = $( event.target );
+
+                if ( $target.is( "a.ui-icon-zoomin" ) ) {
+                    viewLargerImage( $target );
+                } else if ( $target.is( "a.ui-icon-refresh" ) ) {
+                    recycleImage( $item );
+                }
+
+                return false;
+            });
+        });
+    </script>
+</head>
+<body>
+<div>
+    <label for="name">Enter your name: </label>
+    <input id="name" type='text'/>
+    <button onclick="myFunction()">Submit</button>
+	<p>Match the baby photo to the adult photo. Drag and drop photos with your best guesses.</p>
+</div>
+<div class="ui-widget ui-helper-clearfix">
+
+    <ul id="gallery" class="gallery ui-helper-reset ui-helper-clearfix">
+        <li class="ui-widget-content ui-corner-tr">
+            <h5 class="ui-widget-header">Baby</h5>
+            <img src="img/baby/adam-baby.jpg" alt="Larger image" width="96" height="72" />
+            <a href="img/baby/adam-baby.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
+        </li>
+		<li class="ui-widget-content ui-corner-tr">
+            <h5 class="ui-widget-header">Baby</h5>
+            <img src="img/baby/brooke-baby.jpg" alt="Larger image" width="96" height="72" />
+            <a href="img/baby/brooke-baby.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
+        </li>
+		<li class="ui-widget-content ui-corner-tr">
+            <h5 class="ui-widget-header">Baby</h5>
+            <img src="img/baby/jamie-baby.jpg" alt="Larger image" width="96" height="72" />
+            <a href="img/baby/jamie-baby.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
+        </li>
+		<li class="ui-widget-content ui-corner-tr">
+            <h5 class="ui-widget-header">Baby</h5>
+            <img src="img/baby/lea-baby.jpg" alt="Larger image" width="96" height="72" />
+            <a href="img/baby/lea-baby.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
+        </li>
+		<li class="ui-widget-content ui-corner-tr">
+            <h5 class="ui-widget-header">Baby</h5>
+            <img src="img/baby/mario-baby.jpg" alt="Larger image" width="96" height="72" />
+            <a href="img/baby/mario-baby.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
+        </li>
+		<li class="ui-widget-content ui-corner-tr">
+            <h5 class="ui-widget-header">Baby</h5>
+            <img src="img/baby/natalie-baby.jpg" alt="Larger image" width="96" height="72" />
+            <a href="img/baby/natalie-baby.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
+        </li>
+		<li class="ui-widget-content ui-corner-tr">
+            <h5 class="ui-widget-header">Baby</h5>
+            <img src="img/baby/wilmer-baby.jpg" alt="Larger image" width="96" height="72" />
+            <a href="img/baby/wilmer-baby.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
+        </li>
+		<li class="ui-widget-content ui-corner-tr">
+            <h5 class="ui-widget-header">Baby</h5>
+            <img src="img/baby/zooey-baby.jpg" alt="Larger image" width="96" height="72" />
+            <a href="img/baby/zooey-baby.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
+        </li>
+    </ul>
+
+</div>
+
+<div id="adam" style="background-image: url(img/recent/adam-adult.jpg); background-size: 10%; background-repeat:no-repeat;" class="match ui-widget-content ui-state-default">
+    <h4 class="ui-widget-header">Employee</h4>
+</div>
+<div id="brooke" style="background-image: url(img/recent/brooke-adult.jpg); background-size: 20%; background-repeat:no-repeat;" class="match ui-widget-content ui-state-default">
+    <h4 class="ui-widget-header">Employee</h4>
+</div>
+<div id="jamie" style="background-image: url(img/recent/jamie-adult.jpg); background-size: 15%; background-repeat:no-repeat;" class="match ui-widget-content ui-state-default">
+    <h4 class="ui-widget-header">Employee</h4>
+</div>
+<div id="lea" style="background-image: url(img/recent/lea-adult.jpg); background-size: 14%; background-repeat:no-repeat;" class="match ui-widget-content ui-state-default">
+    <h4 class="ui-widget-header">Employee</h4>
+</div>
+<div id="mario" style="background-image: url(img/recent/mario-adult.jpg); background-size: 12%; background-repeat:no-repeat;" class="match ui-widget-content ui-state-default">
+    <h4 class="ui-widget-header">Employee</h4>
+</div>
+<div id="natalie" style="background-image: url(img/recent/natalie-adult.jpg); background-size: 12%; background-repeat:no-repeat;" class="match ui-widget-content ui-state-default">
+    <h4 class="ui-widget-header">Employee</h4>
+</div>
+<div id="wilmer" style="background-image: url(img/recent/wilmer-adult.jpg); background-size: 15%; background-repeat:no-repeat;" class="match ui-widget-content ui-state-default">
+    <h4 class="ui-widget-header">Employee</h4>
+</div>
+<div id="zooey" style="background-image: url(img/recent/zooey-adult.jpg); background-size: 15%; background-repeat:no-repeat;" class="match ui-widget-content ui-state-default">
+    <h4 class="ui-widget-header">Employee</h4>
+</div>
+
+
+</body>
+</html>
